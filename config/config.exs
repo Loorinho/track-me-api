@@ -27,6 +27,11 @@ config :logger, :default_formatter,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+# setting up guardian
+config :track_me_api, TrackMeApi.Auth.Guardian,
+  issuer: "track_me_api",
+  secret_key: "twC8DoqCJcU7GFMtYROFyDn9rBnHNj7k1zDrPBCnxy5EtJzVMvtsxbEQ7K5ObHU0"
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 

@@ -30,5 +30,16 @@ defmodule TrackMeApi.Accounts.Account do
       message: "Password must be at least 12 characters long"
     )
     |> unique_constraint(:email)
+    |> put_password_hash()
   end
+
+  # # If the changeset is valid, then we make some changes i.e hash the password
+  defp put_password_hash(
+         %Ecto.Changeset{valid?: true, changes: %{hashed_password: plain_password}} = changeset
+       ) do
+    change(changeset, hashed_password: Bcrypt.hash_pwd_salt(plain_password))
+  end
+
+  # If the changeset is not valid, then we just return it
+  defp put_password_hash(changeset), do: changeset
 end
