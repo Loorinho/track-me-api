@@ -9,5 +9,7 @@ defmodule TrackMeApiWeb.Router do
     pipe_through :api
 
     get "/hello", DefaultController, :index
+
+    post "/accounts/create", AccountController, :create_user_account
   end
 end

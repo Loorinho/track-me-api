@@ -1,8 +1,7 @@
 defmodule TrackMeApiWeb.AccountController do
   use TrackMeApiWeb, :controller
 
-  alias TrackMeApi.Accounts
-  alias TrackMeApi.Accounts.Account
+  alias TrackMeApi.{Accounts, Accounts.Account, Users, Users.User, Auth.Guardian}
 
   action_fallback TrackMeApiWeb.FallbackController
 
@@ -11,12 +10,22 @@ defmodule TrackMeApiWeb.AccountController do
     render(conn, :index, accounts: accounts)
   end
 
-  def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- Accounts.create_account(account_params) do
+  # We create an account, generate a token for it. If thats good, then we go ahead to create a user given that account
+  def create_user_account(conn, %{"account" => account_params}) do
+    # case  do
+    #   {:error, errors} ->
+    #     created_account = Accounts.get_account_by_email!(account_params["email"])
+    #     IO.inspect(created_account, label: "Created account")
+    #     Accounts.delete_account(created_account)
+    #     errors
+    # end
+
+    with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(account),
+         {:ok, %User{} = _user} <- Users.create_user_from_account(account, account_params) do
       conn
       |> put_status(:created)
-      # |> put_resp_header("location", ~p"/api/v1/accounts/#{account}")
-      |> render(:show, account: account)
+      |> render(:show, account: account, token: token)
     end
   end
 

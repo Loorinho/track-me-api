@@ -29,7 +29,7 @@ defmodule TrackMeApi.Accounts.Account do
       min: 12,
       message: "Password must be at least 12 characters long"
     )
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, message: "Email has already been taken")
     |> put_password_hash()
   end
 

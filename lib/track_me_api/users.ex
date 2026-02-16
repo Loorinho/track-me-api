@@ -56,6 +56,31 @@ defmodule TrackMeApi.Users do
   end
 
   @doc """
+  Creates a user given an account.
+
+  ## Examples
+
+      iex> create_user_given_account(account,%{field: value})
+      {:ok, %User{}}
+
+      iex> create_user_given_account(account,%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+      NOTE:  Since there is alreeady an association where an account has one user,
+      the Ecto.build_assoc() will insert the account_id into the User attributes and then proceed to
+      validate via the changeset
+
+      -> Since user belongs to an account, an account must be in place before creating a user. SO, we are inserting the account_id with the build_assoc
+
+  """
+  def create_user_from_account(account, attrs) do
+    account
+    |> Ecto.build_assoc(:user)
+    |> User.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Updates a user.
 
   ## Examples
