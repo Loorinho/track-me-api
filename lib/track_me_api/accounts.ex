@@ -53,7 +53,7 @@ defmodule TrackMeApi.Accounts do
   """
   def get_account_by_email!(email) do
     Account
-    |> where(:email, ^email)
+    |> where([a], a.email == ^email)
     |> Repo.one()
   end
 
