@@ -23,6 +23,18 @@ defmodule TrackMeApi.Auth.Guardian do
   end
 
   # public function which authenticates user
+
+  @doc """
+    Authenticates a user
+
+    ##Exaple
+    iex> Guardian.authenticate("test@gmail.com", "testPassword")
+    {:ok. token, account}
+
+    iex> Guardian.authenticate("test@gmail.com", "testPassword")
+     {:error, "Invalid username or password"}
+
+  """
   def authenticate(email, password) do
     case Accounts.get_account_by_email!(email) do
       nil ->

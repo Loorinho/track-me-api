@@ -1,7 +1,14 @@
 defmodule TrackMeApiWeb.AccountController do
   use TrackMeApiWeb, :controller
 
-  alias TrackMeApi.{Accounts, Accounts.Account, Users, Users.User, Auth.Guardian}
+  alias TrackMeApi.{
+    Accounts,
+    Accounts.Account,
+    Users,
+    Users.User,
+    Auth.Guardian,
+    Auth.ErrorResponse
+  }
 
   action_fallback TrackMeApiWeb.FallbackController
 
@@ -26,6 +33,18 @@ defmodule TrackMeApiWeb.AccountController do
       conn
       |> put_status(:created)
       |> render(:show, account: account, token: token)
+    end
+  end
+
+  def login_user(conn, %{"email" => email, "password" => password}) do
+    case Guardian.authenticate(email, password) do
+      {:ok, token, account} ->
+        conn
+        |> put_status(:ok)
+        |> render(:show, account: account, token: token)
+
+      {:error, reason} ->
+        raise ErrorResponse.Unauthorized, message: reason
     end
   end
 
