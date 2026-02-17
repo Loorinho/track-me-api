@@ -30,9 +30,14 @@ defmodule TrackMeApiWeb.AccountController do
     with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
          {:ok, token, _claims} <- Guardian.encode_and_sign(account),
          {:ok, %User{} = _user} <- Users.create_user_from_account(account, account_params) do
+      # IO.inspect(user, label: "Created user from account")
+
       conn
       |> put_status(:created)
       |> render(:show, account: account, token: token)
+    else
+      {:error, message} ->
+        IO.inspect(message, label: "Error Message")
     end
   end
 
@@ -50,7 +55,7 @@ defmodule TrackMeApiWeb.AccountController do
 
   def show(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
-    render(conn, :show, account: account)
+    render(conn, :get_account_details, account: account)
   end
 
   def update(conn, %{"id" => id, "account" => account_params}) do

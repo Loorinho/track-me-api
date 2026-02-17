@@ -4,7 +4,7 @@ defmodule TrackMeApiWeb.Router do
 
   def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
     conn
-    |> json(%{errors: message})
+    |> json(%{message: message, status: "failed", success: false})
     # This halt stops the execution of any other downstream plugs
 
     |> halt()
@@ -21,6 +21,10 @@ defmodule TrackMeApiWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug TrackMeApi.Auth.GuardianPipeline
+  end
+
   scope "/api/v1", TrackMeApiWeb do
     pipe_through :api
 
@@ -28,5 +32,12 @@ defmodule TrackMeApiWeb.Router do
 
     post "/accounts/create", AccountController, :create_user_account
     post "/accounts/login", AccountController, :login_user
+  end
+
+  # This is the scope for the protected routes
+  scope "/api/v1", TrackMeApiWeb do
+    pipe_through [:api, :auth]
+
+    get "/accounts/:id", AccountController, :show
   end
 end
