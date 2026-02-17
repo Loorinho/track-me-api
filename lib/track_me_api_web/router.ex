@@ -10,9 +10,9 @@ defmodule TrackMeApiWeb.Router do
     |> halt()
   end
 
-  def handle_errors(conn, %{message: message}) do
+  def handle_errors(conn, %{reason: %{message: message, status: status, success: success}}) do
     conn
-    |> json(%{errors: message})
+    |> json(%{message: message, status: status, success: success})
     # This halt stops the execution of any other downstream plugs
     |> halt()
   end

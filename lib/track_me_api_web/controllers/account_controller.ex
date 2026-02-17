@@ -43,8 +43,8 @@ defmodule TrackMeApiWeb.AccountController do
         |> put_status(:ok)
         |> render(:show, account: account, token: token)
 
-      {:error, reason} ->
-        raise ErrorResponse.Unauthorized, message: reason
+      {:error, :unauthorized} ->
+        raise ErrorResponse.Unauthorized, message: "Invalid Credentials Supplied"
     end
   end
 

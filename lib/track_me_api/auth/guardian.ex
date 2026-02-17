@@ -38,16 +38,18 @@ defmodule TrackMeApi.Auth.Guardian do
   def authenticate(email, password) do
     case Accounts.get_account_by_email!(email) do
       nil ->
-        {:error, "Invalid username or password"}
+        # {:error, "Invalid username or password"}
+        {:error, :unauthorized}
 
       account ->
         case validate_password(password, account.hashed_password) do
-          false ->
-            {:error, "Invalid username or password"}
-
           true ->
             {:ok, token} = create_token(account)
             {:ok, token, account}
+
+          false ->
+            # {:error, "Invalid username or password"}
+            {:error, :unauthorized}
         end
     end
   end
