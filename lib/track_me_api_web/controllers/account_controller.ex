@@ -35,9 +35,6 @@ defmodule TrackMeApiWeb.AccountController do
       conn
       |> put_status(:created)
       |> render(:show, account: account, token: token)
-    else
-      {:error, message} ->
-        IO.inspect(message, label: "Error Message")
     end
   end
 
@@ -45,6 +42,8 @@ defmodule TrackMeApiWeb.AccountController do
     case Guardian.authenticate(email, password) do
       {:ok, token, account} ->
         conn
+        # putting the account id in the session
+        |> Plug.Conn.put_session(:account_id, account.id)
         |> put_status(:ok)
         |> render(:show, account: account, token: token)
 
@@ -53,8 +52,11 @@ defmodule TrackMeApiWeb.AccountController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    account = Accounts.get_account!(id)
+  def show(%Plug.Conn{} = conn, %{"id" => _id}) do
+    # account = Accounts.get_account!(id)
+
+    # We can actually get the account details from the connection without need for one to pass in the id parameter
+    account = conn.assigns.account
     render(conn, :get_account_details, account: account)
   end
 

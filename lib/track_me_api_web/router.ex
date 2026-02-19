@@ -19,10 +19,14 @@ defmodule TrackMeApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+
+    # ensures that the session is always set. The account will always either be set to a value or nil
+    plug :fetch_session
   end
 
   pipeline :auth do
     plug TrackMeApi.Auth.GuardianPipeline
+    plug TrackMeApi.Auth.SetAccount
   end
 
   scope "/api/v1", TrackMeApiWeb do

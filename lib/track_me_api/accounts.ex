@@ -73,9 +73,12 @@ defmodule TrackMeApi.Accounts do
 
   """
   def create_account(attrs) do
-    %Account{}
-    |> Account.changeset(attrs)
-    |> Repo.insert()
+    data =
+      %Account{}
+      |> Account.changeset(attrs)
+      |> Repo.insert()
+
+    data
   end
 
   @doc """
