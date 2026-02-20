@@ -15,6 +15,10 @@ defmodule TrackMeApiWeb.AccountJSON do
     %{data: account_and_token(account, token), message: "success", success: true}
   end
 
+  def show(%{account: account}) do
+    %{data: data(account), message: "success", success: true}
+  end
+
   @doc """
   Renders a single account.
   """

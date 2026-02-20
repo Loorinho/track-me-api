@@ -10,7 +10,28 @@ defmodule TrackMeApiWeb.AccountController do
     Auth.ErrorResponse
   }
 
+  # Our plug middleware will only be invoked when we are trying to access the update function
+  plug :is_authorized_account when action in [:update_account_details]
+
   action_fallback TrackMeApiWeb.FallbackController
+
+  defp is_authorized_account(conn, _options) do
+    %{params: %{"account" => account_params}} = conn
+
+    account = Accounts.get_account!(account_params["id"])
+
+    IO.inspect(account_params, label: "Account Params")
+
+    IO.inspect(account, label: "Account")
+
+    if conn.assigns.account.id == account.id do
+      # We just making sure that the user trying to update an account is actually the user who logged in
+      conn
+    else
+      # If the id of the account we are trying to update is not the id of the session, then we raise a forbidden error
+      raise ErrorResponse.Forbidden
+    end
+  end
 
   def index(conn, _params) do
     accounts = Accounts.list_accounts()
@@ -52,18 +73,19 @@ defmodule TrackMeApiWeb.AccountController do
     end
   end
 
-  def show(%Plug.Conn{} = conn, %{"id" => _id}) do
-    # account = Accounts.get_account!(id)
+  def show(%Plug.Conn{} = conn, %{"id" => id}) do
+    account = Accounts.get_account!(id)
 
     # We can actually get the account details from the connection without need for one to pass in the id parameter
-    account = conn.assigns.account
+    # account = conn.assigns.account
     render(conn, :get_account_details, account: account)
   end
 
-  def update(conn, %{"id" => id, "account" => account_params}) do
-    account = Accounts.get_account!(id)
+  def update_account_details(conn, %{"account" => account_params}) do
+    user_account = Accounts.get_account!(account_params["id"])
 
-    with {:ok, %Account{} = account} <- Accounts.update_account(account, account_params) do
+    with {:ok, %Account{} = account} <- Accounts.update_account(user_account, account_params),
+         {:ok, %User{} = _user} <- Users.update_user(account.user, account_params) do
       render(conn, :show, account: account)
     end
   end

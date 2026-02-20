@@ -43,5 +43,6 @@ defmodule TrackMeApiWeb.Router do
     pipe_through [:api, :auth]
 
     get "/accounts/:id", AccountController, :show
+    post "/accounts/update", AccountController, :update_account_details
   end
 end
