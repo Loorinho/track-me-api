@@ -22,6 +22,21 @@ defmodule TrackMeApi.Projects do
   end
 
   @doc """
+  Returns the list of projects for a given user.
+
+  ## Examples
+
+      iex> list_projects()
+      [%Project{}, ...]
+
+  """
+  def get_user_projects(user_id) do
+    Project
+    |> where([p], p.owner_id == ^user_id)
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single project.
 
   Raises `Ecto.NoResultsError` if the Project does not exist.

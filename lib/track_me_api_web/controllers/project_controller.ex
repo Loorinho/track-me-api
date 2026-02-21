@@ -6,8 +6,8 @@ defmodule TrackMeApiWeb.ProjectController do
 
   action_fallback TrackMeApiWeb.FallbackController
 
-  def list_projects(conn, _params) do
-    projects = Projects.list_projects()
+  def list_projects(conn, %{"user_id" => user_id}) do
+    projects = Projects.get_user_projects(user_id)
     render(conn, :index, projects: projects)
   end
 

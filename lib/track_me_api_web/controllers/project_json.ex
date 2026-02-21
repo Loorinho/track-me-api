@@ -6,7 +6,11 @@ defmodule TrackMeApiWeb.ProjectJSON do
   Renders a list of projects.
   """
   def index(%{projects: projects}) do
-    %{data: for(project <- projects, do: data(project))}
+    %{
+      data: for(project <- projects, do: data(project)),
+      success: true,
+      message: "Projects retrieved successfully"
+    }
   end
 
   @doc """

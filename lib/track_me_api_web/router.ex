@@ -47,5 +47,7 @@ defmodule TrackMeApiWeb.Router do
 
     post "/projects/create", ProjectController, :create_project
     get "/projects/:id", ProjectController, :get_project_details
+
+    post "/projects", ProjectController, :list_projects
   end
 end
