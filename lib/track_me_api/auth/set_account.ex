@@ -27,7 +27,7 @@ defmodule TrackMeApi.Auth.SetAccount do
       account = Accounts.get_account!(account_id)
 
       cond do
-        # If we successfully, get the account, we set it in the assigns under the :account key or just set it to nul if we have no account
+        # If we successfully, get the account, we set it in the assigns under the :account key or just set it to nil if we have no account
         account_id && account -> assign(conn, :account, account)
         true -> assign(conn, :account, nil)
       end

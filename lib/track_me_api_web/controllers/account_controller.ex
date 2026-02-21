@@ -20,10 +20,6 @@ defmodule TrackMeApiWeb.AccountController do
 
     account = Accounts.get_account!(account_params["id"])
 
-    IO.inspect(account_params, label: "Account Params")
-
-    IO.inspect(account, label: "Account")
-
     if conn.assigns.account.id == account.id do
       # We just making sure that the user trying to update an account is actually the user who logged in
       conn
